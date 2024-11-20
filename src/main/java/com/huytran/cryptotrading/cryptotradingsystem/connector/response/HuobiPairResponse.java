@@ -1,6 +1,5 @@
 package com.huytran.cryptotrading.cryptotradingsystem.connector.response;
 
-import com.huytran.cryptotrading.cryptotradingsystem.connector.model.BinancePair;
 import com.huytran.cryptotrading.cryptotradingsystem.connector.model.HuobiPair;
 import lombok.*;
 
