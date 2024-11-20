@@ -19,9 +19,5 @@ public class AggregatedPrice {
     private String pair;
     private Double bidPrice; // Best price to SELL
     private Double askPrice; // Best price to BUY
-
-    @Column(name = "timestamp")
-    private LocalDateTime timestamp;
-
-    // Constructors, Getters, and Setters
+    @Builder.Default private LocalDateTime timestamp = LocalDateTime.now();
 }
