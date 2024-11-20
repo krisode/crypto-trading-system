@@ -16,8 +16,5 @@ public class CryptoUser {
 
     @Column(nullable = false, unique = true)
     private String username;
-
-    @Column(name = "wallet_balance")
-    private Double walletBalance;
 }
 

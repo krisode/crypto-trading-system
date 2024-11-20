@@ -3,7 +3,7 @@ package com.huytran.cryptotrading.cryptotradingsystem.service;
 import com.huytran.cryptotrading.cryptotradingsystem.connector.feignclient.BinancePriceFeignClient;
 import com.huytran.cryptotrading.cryptotradingsystem.connector.feignclient.HuobiPriceFeignClient;
 import com.huytran.cryptotrading.cryptotradingsystem.entity.AggregatedPrice;
-import com.huytran.cryptotrading.cryptotradingsystem.enums.CryptoPair;
+import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
 import com.huytran.cryptotrading.cryptotradingsystem.repository.AggregatedPriceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,24 +29,24 @@ public class AggregatedPriceServiceImpl implements AggregatedPriceService {
 
         final var aggregatedPrices = Stream.concat(
                 binancePairs.stream()
-                        .filter(binancePair -> CryptoPair.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
-                                            || CryptoPair.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
-                        .map(binancePair -> AggregatedPrice.builder().pair(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBidPrice()).askPrice(binancePair.getAskPrice()).build()),
+                        .filter(binancePair -> Symbol.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
+                                            || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
+                        .map(binancePair -> AggregatedPrice.builder().symbol(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBidPrice()).askPrice(binancePair.getAskPrice()).build()),
                 huobiPairs.stream()
-                        .filter(binancePair -> CryptoPair.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
-                                || CryptoPair.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
-                        .map(binancePair -> AggregatedPrice.builder().pair(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBid()).askPrice(binancePair.getAsk()).build())
+                        .filter(binancePair -> Symbol.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
+                                || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
+                        .map(binancePair -> AggregatedPrice.builder().symbol(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBid()).askPrice(binancePair.getAsk()).build())
                 ).toList();
 
         Map<String, AggregatedPrice> bestPrices = aggregatedPrices.stream()
                 .collect(Collectors.toMap(
-                   AggregatedPrice::getPair,
+                   AggregatedPrice::getSymbol,
                    p -> p,
                    (p1 , p2) ->
                        AggregatedPrice.builder()
-                               .pair(p1.getPair())
-                               .bidPrice(Math.max(p1.getBidPrice(), p2.getBidPrice()))
-                               .askPrice(Math.min(p1.getAskPrice(), p2.getAskPrice()))
+                               .symbol(p1.getSymbol())
+                               .bidPrice(Math.min(p1.getBidPrice(), p2.getBidPrice()))
+                               .askPrice(Math.max(p1.getAskPrice(), p2.getAskPrice()))
                                .build()
 
                 ));

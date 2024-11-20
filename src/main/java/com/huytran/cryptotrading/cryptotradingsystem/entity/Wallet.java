@@ -1,5 +1,6 @@
 package com.huytran.cryptotrading.cryptotradingsystem.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,13 +9,17 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "trading_pair")
-public class TradingPair {
+@Entity(name = "wallet")
+public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
 
-    private String pair; // e.g., BTCUSDT or ETHUSDT
+    @ManyToOne
+    private CryptoUser user;
 
-    // Getters and Setters
+    private String currency;
+
+    private Double balance;
 }
