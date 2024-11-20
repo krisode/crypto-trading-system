@@ -1,37 +1,41 @@
 -- Users Table
 CREATE TABLE crypto_user
 (
-    id             BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username       VARCHAR(255)   NOT NULL UNIQUE,
-    wallet_balance DECIMAL(15, 2) NOT NULL
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    username       VARCHAR(255)   NOT NULL UNIQUE
 );
 
--- Trading Pairs Table
-CREATE TABLE trading_pair
+-- Wallet table
+CREATE TABLE wallet
 (
-    id   BIGINT AUTO_INCREMENT PRIMARY KEY,
-    pair VARCHAR(10) NOT NULL UNIQUE
+    id       INT PRIMARY KEY AUTO_INCREMENT,
+    user_id  INT            NOT NULL,
+    currency VARCHAR(10)    NOT NULL, -- ETH, BTC, USDT
+    balance  DECIMAL(18, 8) NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES crypto_user (id),
+    UNIQUE (user_id, currency)
 );
+
 
 -- Aggregated Prices Table
 CREATE TABLE aggregated_price
 (
-    id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    pair      VARCHAR(10)    NOT NULL,
-    bid_price DECIMAL(15, 2) NOT NULL, -- Used for SELL orders
-    ask_price DECIMAL(15, 2) NOT NULL, -- Used for BUY orders
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id        INT PRIMARY KEY AUTO_INCREMENT,
+    symbol    VARCHAR(10)    NOT NULL, -- ETHUSDT, BTCUSDT
+    bid_price DECIMAL(18, 8) NOT NULL, -- Used for SELL orders
+    ask_price DECIMAL(18, 8) NOT NULL, -- Used for BUY orders
+    timestamp DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Transactions Table
 CREATE TABLE transaction
 (
-    id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id             BIGINT         NOT NULL,
-    pair                VARCHAR(10)    NOT NULL,
-    transaction_type    VARCHAR(10)    NOT NULL, -- 'BUY' or 'SELL'
-    price               DECIMAL(15, 2) NOT NULL,
-    quantity            DECIMAL(15, 8) NOT NULL,
-    timestamp           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id        INT PRIMARY KEY AUTO_INCREMENT,
+    user_id   INT            NOT NULL,
+    symbol    VARCHAR(10)    NOT NULL, -- ETHUSDT, BTCUSDT
+    type      ENUM('BUY', 'SELL') NOT NULL,
+    price     DECIMAL(18, 8) NOT NULL,
+    quantity  DECIMAL(18, 8) NOT NULL,
+    timestamp DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES crypto_user (id)
 );

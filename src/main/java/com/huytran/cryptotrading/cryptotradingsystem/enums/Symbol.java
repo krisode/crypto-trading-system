@@ -1,6 +1,6 @@
 package com.huytran.cryptotrading.cryptotradingsystem.enums;
 
-public enum CryptoPair {
+public enum Symbol {
     ETHUSDT,
     BTCUSDT;
 }

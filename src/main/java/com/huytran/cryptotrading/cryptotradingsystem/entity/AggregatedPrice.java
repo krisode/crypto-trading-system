@@ -16,7 +16,7 @@ public class AggregatedPrice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String pair;
+    private String symbol;
     private Double bidPrice; // Best price to SELL
     private Double askPrice; // Best price to BUY
     @Builder.Default private LocalDateTime timestamp = LocalDateTime.now();
