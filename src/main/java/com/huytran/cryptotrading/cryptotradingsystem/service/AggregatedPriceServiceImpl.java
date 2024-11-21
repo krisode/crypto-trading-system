@@ -8,6 +8,7 @@ import com.huytran.cryptotrading.cryptotradingsystem.repository.AggregatedPriceR
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,6 +52,25 @@ public class AggregatedPriceServiceImpl implements AggregatedPriceService {
 
                 ));
         bestPrices.values().forEach(this::saveToDb);
+    }
+
+    @Override
+    public AggregatedPrice getLatestBestPriceForSymbol(Symbol symbol) {
+        final var latestBestPrice = aggregatedPriceRepository.findTop1AggregatedPriceBySymbolOrderByTimestampDesc(symbol.name());
+
+        if (latestBestPrice.isEmpty()) {
+            throw new RuntimeException("No aggregated price found for symbol: " + symbol);
+        }
+
+        return latestBestPrice.get();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public List<AggregatedPrice> getLatestBestPriceForAllSymbols() {
+        return aggregatedPriceRepository.findAllGroupedBySymbolOrderByTimestampDesc();
     }
 
     private void saveToDb(AggregatedPrice aggregatedPrice) {
