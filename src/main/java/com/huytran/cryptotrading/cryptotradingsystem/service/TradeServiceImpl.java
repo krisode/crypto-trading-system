@@ -1,9 +1,9 @@
 package com.huytran.cryptotrading.cryptotradingsystem.service;
 
 import com.huytran.cryptotrading.cryptotradingsystem.entity.Transaction;
-import com.huytran.cryptotrading.cryptotradingsystem.enums.TradeType;
 import com.huytran.cryptotrading.cryptotradingsystem.model.request.TradeRequest;
 import com.huytran.cryptotrading.cryptotradingsystem.model.response.TradeResponse;
+import com.huytran.cryptotrading.cryptotradingsystem.service.factory.TradeActionFactory;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TradeServiceImpl implements TradeService {
-  // TODO: Once finish, choose a name between "Trade" or "Transaction"
   // TODO: Consider about Assumption
   // 1. User has already authenticated and authorised to access the APIs => This one
   // 2. User's initial wallet balance 50,000 USDT in DB record.
@@ -20,8 +19,9 @@ public class TradeServiceImpl implements TradeService {
   // trading.
   private final AggregatedPriceService aggregatedPriceService;
   private final CryptoUserService cryptoUserService;
-  private final WalletService walletService;
   private final TransactionService transactionService;
+
+  private final TradeActionFactory tradeActionFactory;
 
   @Override
   @Transactional
@@ -30,42 +30,23 @@ public class TradeServiceImpl implements TradeService {
         cryptoUserService
             .getByUserId(tradeRequest.getCryptoUserId())
             .orElseThrow(() -> new RuntimeException("Crypto user not found"));
-    double tradePrice = getTradePrice(tradeRequest);
+    final var tradePrice =
+        aggregatedPriceService
+            .requireLatestBestPriceForSymbol(tradeRequest.getSymbol())
+            .getPriceForTradeType(tradeRequest.getTradeType());
+    final var tradeAction = tradeActionFactory.getTradeAction(tradeRequest.getTradeType());
+    tradeAction.execute(cryptoUser, tradeRequest, tradePrice);
 
-    if (TradeType.BUY.equals(tradeRequest.getTradeType())) {
-      walletService.buyCrypto(
-          cryptoUser,
-          tradeRequest.getSymbol(),
-          tradeRequest.getTradeType(),
-          tradePrice,
-          tradeRequest.getQuantity());
-    } else {
-      walletService.sellCrypto(
-          cryptoUser,
-          tradeRequest.getSymbol(),
-          tradeRequest.getTradeType(),
-          tradePrice,
-          tradeRequest.getQuantity());
-    }
-
-    return new TradeResponse(
-        tradeRequest.getSymbol(),
-        tradeRequest.getTradeType(),
-        tradeRequest.getQuantity(),
-        tradePrice);
+    return TradeResponse.builder()
+        .symbol(tradeRequest.getSymbol())
+        .tradeType(tradeRequest.getTradeType())
+        .quantity(tradeRequest.getQuantity())
+        .price(tradePrice)
+        .build();
   }
 
   @Override
   public List<Transaction> getTradeHistoryByUserId(Long userId) {
     return transactionService.getAllTransactionsByUserId(userId);
-  }
-
-  private double getTradePrice(TradeRequest tradeRequest) {
-    final var bestLatestPrice =
-        aggregatedPriceService.requireLatestBestPriceForSymbol(tradeRequest.getSymbol());
-
-    return TradeType.BUY.equals(tradeRequest.getTradeType())
-        ? bestLatestPrice.getAskPrice()
-        : bestLatestPrice.getBidPrice();
   }
 }

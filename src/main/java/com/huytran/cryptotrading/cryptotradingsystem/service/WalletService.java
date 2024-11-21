@@ -4,7 +4,6 @@ import com.huytran.cryptotrading.cryptotradingsystem.entity.CryptoUser;
 import com.huytran.cryptotrading.cryptotradingsystem.entity.Wallet;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Currency;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
-import com.huytran.cryptotrading.cryptotradingsystem.enums.TradeType;
 import java.util.List;
 
 public interface WalletService {
@@ -15,17 +14,7 @@ public interface WalletService {
 
   List<Wallet> getAllWalletsByUserId(Long userId);
 
-  void buyCrypto(
-      CryptoUser cryptoUser,
-      Symbol symbol,
-      TradeType tradeType,
-      double tradePrice,
-      double quantity);
+  void buyCrypto(CryptoUser cryptoUser, Symbol symbol, double tradePrice, double quantity);
 
-  void sellCrypto(
-      CryptoUser cryptoUser,
-      Symbol symbol,
-      TradeType tradeType,
-      double tradePrice,
-      double quantity);
+  void sellCrypto(CryptoUser cryptoUser, Symbol symbol, double tradePrice, double quantity);
 }

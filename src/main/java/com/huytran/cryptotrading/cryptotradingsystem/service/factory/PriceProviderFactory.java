@@ -1,6 +1,7 @@
-package com.huytran.cryptotrading.cryptotradingsystem.service.provider;
+package com.huytran.cryptotrading.cryptotradingsystem.service.factory;
 
 import com.huytran.cryptotrading.cryptotradingsystem.entity.AggregatedPrice;
+import com.huytran.cryptotrading.cryptotradingsystem.service.provider.PriceProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
