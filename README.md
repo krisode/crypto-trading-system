@@ -120,6 +120,6 @@ com.huytran.cryptotrading.cryptotradingsystem
 ---
 
 ### **Contact**
-- For issues or inquiries, feel free to contact: **Huy Tran**
+- For issues or inquiries, feel free to contact: **Tran Trinh Dang Huy**
 - Email: trantrindanghuy1406@gmail.com
 - LinkedIn: https://www.linkedin.com/in/tran-trinh-dang-huy-11b9291b3/
