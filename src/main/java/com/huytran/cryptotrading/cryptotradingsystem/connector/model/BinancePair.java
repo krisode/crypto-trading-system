@@ -8,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BinancePair {
-    private String symbol;
-    private double bidPrice;
-    private double bidQty;
-    private double askPrice;
-    private double askQty;
+  private String symbol;
+  private double bidPrice;
+  private double bidQty;
+  private double askPrice;
+  private double askQty;
 }

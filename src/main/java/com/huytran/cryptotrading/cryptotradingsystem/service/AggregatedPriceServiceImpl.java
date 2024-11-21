@@ -5,75 +5,93 @@ import com.huytran.cryptotrading.cryptotradingsystem.connector.feignclient.Huobi
 import com.huytran.cryptotrading.cryptotradingsystem.entity.AggregatedPrice;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
 import com.huytran.cryptotrading.cryptotradingsystem.repository.AggregatedPriceRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AggregatedPriceServiceImpl implements AggregatedPriceService {
 
-    private final BinancePriceFeignClient binancePriceFeignClient;
-    private final HuobiPriceFeignClient huobiPriceFeignClient;
+  private final BinancePriceFeignClient binancePriceFeignClient;
+  private final HuobiPriceFeignClient huobiPriceFeignClient;
 
-    private final AggregatedPriceRepository aggregatedPriceRepository;
+  private final AggregatedPriceRepository aggregatedPriceRepository;
 
-    @Override
-    public void aggregatePrice() {
-        // TODO: Extract logic to fetch Binance & Huobi with desired CryptoPair
-        final var binancePairs = binancePriceFeignClient.fetchBinancePair();
-        final var huobiPairs = huobiPriceFeignClient.fetchHuobiPair().getData();
+  @Override
+  public void aggregatePrice() {
+    // TODO: Extract logic to fetch Binance & Huobi with desired CryptoPair
+    final var binancePairs = binancePriceFeignClient.fetchBinancePair();
+    final var huobiPairs = huobiPriceFeignClient.fetchHuobiPair().getData();
 
-        final var aggregatedPrices = Stream.concat(
+    final var aggregatedPrices =
+        Stream.concat(
                 binancePairs.stream()
-                        .filter(binancePair -> Symbol.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
-                                            || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
-                        .map(binancePair -> AggregatedPrice.builder().symbol(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBidPrice()).askPrice(binancePair.getAskPrice()).build()),
+                    .filter(
+                        binancePair ->
+                            Symbol.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
+                                || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
+                    .map(
+                        binancePair ->
+                            AggregatedPrice.builder()
+                                .symbol(binancePair.getSymbol().toUpperCase())
+                                .bidPrice(binancePair.getBidPrice())
+                                .askPrice(binancePair.getAskPrice())
+                                .build()),
                 huobiPairs.stream()
-                        .filter(huobiPair -> Symbol.ETHUSDT.name().equalsIgnoreCase(huobiPair.getSymbol())
+                    .filter(
+                        huobiPair ->
+                            Symbol.ETHUSDT.name().equalsIgnoreCase(huobiPair.getSymbol())
                                 || Symbol.BTCUSDT.name().equalsIgnoreCase(huobiPair.getSymbol()))
-                        .map(huobiPair -> AggregatedPrice.builder().symbol(huobiPair.getSymbol().toUpperCase()).bidPrice(huobiPair.getBid()).askPrice(huobiPair.getAsk()).build())
-                ).toList();
+                    .map(
+                        huobiPair ->
+                            AggregatedPrice.builder()
+                                .symbol(huobiPair.getSymbol().toUpperCase())
+                                .bidPrice(huobiPair.getBid())
+                                .askPrice(huobiPair.getAsk())
+                                .build()))
+            .toList();
 
-        Map<String, AggregatedPrice> bestPrices = aggregatedPrices.stream()
-                .collect(Collectors.toMap(
-                   AggregatedPrice::getSymbol,
-                   p -> p,
-                   (p1 , p2) ->
-                       AggregatedPrice.builder()
-                               .symbol(p1.getSymbol())
-                               .bidPrice(Math.max(p1.getBidPrice(), p2.getBidPrice()))
-                               .askPrice(Math.min(p1.getAskPrice(), p2.getAskPrice()))
-                               .build()
+    Map<String, AggregatedPrice> bestPrices =
+        aggregatedPrices.stream()
+            .collect(
+                Collectors.toMap(
+                    AggregatedPrice::getSymbol,
+                    p -> p,
+                    (p1, p2) ->
+                        AggregatedPrice.builder()
+                            .symbol(p1.getSymbol())
+                            .bidPrice(Math.max(p1.getBidPrice(), p2.getBidPrice()))
+                            .askPrice(Math.min(p1.getAskPrice(), p2.getAskPrice()))
+                            .build()));
+    bestPrices.values().forEach(this::saveToDb);
+  }
 
-                ));
-        bestPrices.values().forEach(this::saveToDb);
+  @Override
+  public AggregatedPrice requireLatestBestPriceForSymbol(Symbol symbol) {
+    final var latestBestPrice =
+        aggregatedPriceRepository.findTop1AggregatedPriceBySymbolOrderByTimestampDesc(
+            symbol.name());
+
+    if (latestBestPrice.isEmpty()) {
+      throw new RuntimeException("No aggregated price found for symbol: " + symbol);
     }
 
-    @Override
-    public AggregatedPrice requireLatestBestPriceForSymbol(Symbol symbol) {
-        final var latestBestPrice = aggregatedPriceRepository.findTop1AggregatedPriceBySymbolOrderByTimestampDesc(symbol.name());
+    return latestBestPrice.get();
+  }
 
-        if (latestBestPrice.isEmpty()) {
-            throw new RuntimeException("No aggregated price found for symbol: " + symbol);
-        }
+  /**
+   * @return
+   */
+  @Override
+  public List<AggregatedPrice> getLatestBestPriceForAllSymbols() {
+    return aggregatedPriceRepository.findAllGroupedBySymbolOrderByTimestampDesc();
+  }
 
-        return latestBestPrice.get();
-    }
-
-    /**
-     * @return
-     */
-    @Override
-    public List<AggregatedPrice> getLatestBestPriceForAllSymbols() {
-        return aggregatedPriceRepository.findAllGroupedBySymbolOrderByTimestampDesc();
-    }
-
-    private void saveToDb(AggregatedPrice aggregatedPrice) {
-        aggregatedPriceRepository.save(aggregatedPrice);
-    }
+  private void saveToDb(AggregatedPrice aggregatedPrice) {
+    aggregatedPriceRepository.save(aggregatedPrice);
+  }
 }

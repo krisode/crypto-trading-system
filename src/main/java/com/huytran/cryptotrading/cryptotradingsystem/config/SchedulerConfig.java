@@ -11,5 +11,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "crypto-trading-system.config.scheduler")
 public class SchedulerConfig {
 
-    private long priceAggregationInterval;
+  private long priceAggregationInterval;
 }

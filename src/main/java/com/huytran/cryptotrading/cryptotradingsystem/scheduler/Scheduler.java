@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class Scheduler {
 
-    private final AggregatedPriceService aggregatedPriceService;
+  private final AggregatedPriceService aggregatedPriceService;
 
-    @Scheduled(fixedRateString = "#{schedulerConfig.priceAggregationInterval}") // SpEL expression
-    public void aggregatePrice() {
-        aggregatedPriceService.aggregatePrice();
-    }
+  @Scheduled(fixedRateString = "#{schedulerConfig.priceAggregationInterval}") // SpEL expression
+  public void aggregatePrice() {
+    aggregatedPriceService.aggregatePrice();
+  }
 }

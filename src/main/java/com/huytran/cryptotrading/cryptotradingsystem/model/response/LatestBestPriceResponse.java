@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class LatestBestPriceResponse {
-    private String symbol;
-    private Double bidPrice;
-    private Double askPrice;
+  private String symbol;
+  private Double bidPrice;
+  private Double askPrice;
 }

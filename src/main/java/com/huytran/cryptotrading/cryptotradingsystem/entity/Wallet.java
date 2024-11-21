@@ -11,26 +11,25 @@ import lombok.*;
 @AllArgsConstructor
 @Entity(name = "wallet")
 public class Wallet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonIgnore
+  private Long id;
 
-    @ManyToOne
-    private CryptoUser user;
+  @ManyToOne private CryptoUser user;
 
-    private String currency;
+  private String currency;
 
-    private Double balance;
+  private Double balance;
 
-    public void add(double quantity) {
-        this.balance += quantity;
+  public void add(double quantity) {
+    this.balance += quantity;
+  }
+
+  public void subtract(double quantity) {
+    if (this.balance < quantity) {
+      throw new IllegalArgumentException("Insufficient balance");
     }
-
-    public void subtract(double quantity) {
-        if (this.balance < quantity) {
-            throw new IllegalArgumentException("Insufficient balance");
-        }
-        this.balance -= quantity;
-    }
+    this.balance -= quantity;
+  }
 }

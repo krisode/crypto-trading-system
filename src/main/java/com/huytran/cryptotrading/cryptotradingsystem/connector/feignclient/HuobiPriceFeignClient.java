@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(value = "huobiFeignClient")
 public interface HuobiPriceFeignClient {
 
-    @GetMapping(value = "/market/tickers")
-    HuobiPairResponse fetchHuobiPair();
+  @GetMapping(value = "/market/tickers")
+  HuobiPairResponse fetchHuobiPair();
 
-    // TODO: Create a service to fetch and execute fetching logic
+  // TODO: Create a service to fetch and execute fetching logic
 }
