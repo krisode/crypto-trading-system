@@ -11,7 +11,7 @@ public interface AggregatedPriceService {
 
     void aggregatePrice();
 
-    AggregatedPrice getLatestBestPriceForSymbol(Symbol symbol);
+    AggregatedPrice requireLatestBestPriceForSymbol(Symbol symbol);
 
     List<AggregatedPrice> getLatestBestPriceForAllSymbols();
 }

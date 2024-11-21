@@ -55,7 +55,7 @@ public class AggregatedPriceServiceImpl implements AggregatedPriceService {
     }
 
     @Override
-    public AggregatedPrice getLatestBestPriceForSymbol(Symbol symbol) {
+    public AggregatedPrice requireLatestBestPriceForSymbol(Symbol symbol) {
         final var latestBestPrice = aggregatedPriceRepository.findTop1AggregatedPriceBySymbolOrderByTimestampDesc(symbol.name());
 
         if (latestBestPrice.isEmpty()) {
