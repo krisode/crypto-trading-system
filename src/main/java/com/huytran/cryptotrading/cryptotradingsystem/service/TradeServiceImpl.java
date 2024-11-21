@@ -1,11 +1,14 @@
 package com.huytran.cryptotrading.cryptotradingsystem.service;
 
+import com.huytran.cryptotrading.cryptotradingsystem.entity.Transaction;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.TradeType;
 import com.huytran.cryptotrading.cryptotradingsystem.model.request.TradeRequest;
 import com.huytran.cryptotrading.cryptotradingsystem.model.response.TradeResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +38,11 @@ public class TradeServiceImpl implements TradeService {
         }
 
         return new TradeResponse(tradeRequest.getSymbol(), tradeRequest.getTradeType(), tradeRequest.getQuantity(), tradePrice);
+    }
+
+    @Override
+    public List<Transaction> getTradeHistoryByUserId(Long userId) {
+        return transactionService.getAllTransactionsByUserId(userId);
     }
 
     private double getTradePrice(TradeRequest tradeRequest) {
