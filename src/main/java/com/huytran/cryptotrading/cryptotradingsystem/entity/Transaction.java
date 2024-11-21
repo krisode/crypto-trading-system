@@ -2,6 +2,7 @@ package com.huytran.cryptotrading.cryptotradingsystem.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.huytran.cryptotrading.cryptotradingsystem.enums.TradeType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,15 +25,34 @@ public class Transaction {
 
     private String symbol;
 
-    @Column(name = "transaction_type")
-    private String transactionType; // BUY or SELL
+    private String type; // BUY or SELL
 
     private Double price;
 
     private Double quantity;
 
-    private Double totalValue;
-
     @Column(name = "timestamp")
     @Builder.Default private LocalDateTime timestamp = LocalDateTime.now();
+
+    public static Transaction initBuyTransactionInstance(CryptoUser cryptoUser, String symbol, double price, double quantity) {
+        return Transaction.builder()
+                .user(cryptoUser)
+                .symbol(symbol)
+                .type(TradeType.BUY.name())
+                .price(price)
+                .quantity(quantity)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    public static Transaction initSellTransactionInstance(CryptoUser cryptoUser, String symbol, double price, double quantity) {
+        return Transaction.builder()
+                .user(cryptoUser)
+                .symbol(symbol)
+                .type(TradeType.SELL.name())
+                .price(price)
+                .quantity(quantity)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
 }

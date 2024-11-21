@@ -28,7 +28,7 @@ public class PriceController {
 
     @GetMapping("/latest/{symbol}")
     public ResponseEntity<LatestBestPrice> getLatestBestPrice(@PathVariable Symbol symbol) {
-        final var latestBestPriceForSymbol = aggregatedPriceService.getLatestBestPriceForSymbol(symbol);
+        final var latestBestPriceForSymbol = aggregatedPriceService.requireLatestBestPriceForSymbol(symbol);
         final var response = priceMapper.toResponse(latestBestPriceForSymbol);
 
         return ResponseEntity.ok(response);

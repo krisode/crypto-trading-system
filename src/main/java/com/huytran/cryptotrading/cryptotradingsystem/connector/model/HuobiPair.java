@@ -13,7 +13,7 @@ public class HuobiPair {
     private double high;
     private double low;
     private double close;
-    private double amount;
+    private double quantity;
     private double vol;
     private long count;
     private double bid;
