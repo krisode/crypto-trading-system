@@ -3,7 +3,7 @@ package com.huytran.cryptotrading.cryptotradingsystem.service;
 import com.huytran.cryptotrading.cryptotradingsystem.entity.AggregatedPrice;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
 import com.huytran.cryptotrading.cryptotradingsystem.repository.AggregatedPriceRepository;
-import com.huytran.cryptotrading.cryptotradingsystem.service.provider.PriceProviderFactory;
+import com.huytran.cryptotrading.cryptotradingsystem.service.factory.PriceProviderFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

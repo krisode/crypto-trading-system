@@ -1,11 +1,9 @@
 package com.huytran.cryptotrading.cryptotradingsystem.service;
 
 import com.huytran.cryptotrading.cryptotradingsystem.entity.CryptoUser;
-import com.huytran.cryptotrading.cryptotradingsystem.entity.Transaction;
 import com.huytran.cryptotrading.cryptotradingsystem.entity.Wallet;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Currency;
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
-import com.huytran.cryptotrading.cryptotradingsystem.enums.TradeType;
 import com.huytran.cryptotrading.cryptotradingsystem.repository.WalletRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
 
-  private final TransactionService transactionService;
   private final WalletRepository walletRepository;
 
   @Override
@@ -39,12 +36,7 @@ public class WalletServiceImpl implements WalletService {
   }
 
   @Override
-  public void buyCrypto(
-      CryptoUser cryptoUser,
-      Symbol symbol,
-      TradeType tradeType,
-      double tradePrice,
-      double quantity) {
+  public void buyCrypto(CryptoUser cryptoUser, Symbol symbol, double tradePrice, double quantity) {
     final var baseCurrency = Symbol.getBaseCurrency(symbol);
     final var quoteCurrency = Symbol.getQuoteCurrency(symbol);
     final var baseCurrencyWallet = getOrCreateWallet(cryptoUser, Currency.valueOf(baseCurrency));
@@ -54,19 +46,11 @@ public class WalletServiceImpl implements WalletService {
     quoteCurrencyWallet.subtract(total);
     baseCurrencyWallet.add(quantity);
 
-    walletRepository.save(baseCurrencyWallet);
-    walletRepository.save(quoteCurrencyWallet);
-    transactionService.createTransaction(
-        Transaction.initBuyTransactionInstance(cryptoUser, symbol.name(), tradePrice, quantity));
+    walletRepository.saveAll(List.of(baseCurrencyWallet, quoteCurrencyWallet));
   }
 
   @Override
-  public void sellCrypto(
-      CryptoUser cryptoUser,
-      Symbol symbol,
-      TradeType tradeType,
-      double tradePrice,
-      double quantity) {
+  public void sellCrypto(CryptoUser cryptoUser, Symbol symbol, double tradePrice, double quantity) {
     final var baseCurrency = Symbol.getBaseCurrency(symbol);
     final var quoteCurrency = Symbol.getQuoteCurrency(symbol);
     final var baseCurrencyWallet = getOrCreateWallet(cryptoUser, Currency.valueOf(baseCurrency));
@@ -76,10 +60,7 @@ public class WalletServiceImpl implements WalletService {
     baseCurrencyWallet.subtract(quantity);
     quoteCurrencyWallet.add(total);
 
-    walletRepository.save(baseCurrencyWallet);
-    walletRepository.save(quoteCurrencyWallet);
-    transactionService.createTransaction(
-        Transaction.initSellTransactionInstance(cryptoUser, symbol.name(), tradePrice, quantity));
+    walletRepository.saveAll(List.of(baseCurrencyWallet, quoteCurrencyWallet));
   }
 
   private Wallet getOrCreateWallet(CryptoUser cryptoUser, Currency currency) {
