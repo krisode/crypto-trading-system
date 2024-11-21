@@ -34,9 +34,9 @@ public class AggregatedPriceServiceImpl implements AggregatedPriceService {
                                             || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
                         .map(binancePair -> AggregatedPrice.builder().symbol(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBidPrice()).askPrice(binancePair.getAskPrice()).build()),
                 huobiPairs.stream()
-                        .filter(binancePair -> Symbol.ETHUSDT.name().equalsIgnoreCase(binancePair.getSymbol())
-                                || Symbol.BTCUSDT.name().equalsIgnoreCase(binancePair.getSymbol()))
-                        .map(binancePair -> AggregatedPrice.builder().symbol(binancePair.getSymbol().toUpperCase()).bidPrice(binancePair.getBid()).askPrice(binancePair.getAsk()).build())
+                        .filter(huobiPair -> Symbol.ETHUSDT.name().equalsIgnoreCase(huobiPair.getSymbol())
+                                || Symbol.BTCUSDT.name().equalsIgnoreCase(huobiPair.getSymbol()))
+                        .map(huobiPair -> AggregatedPrice.builder().symbol(huobiPair.getSymbol().toUpperCase()).bidPrice(huobiPair.getBid()).askPrice(huobiPair.getAsk()).build())
                 ).toList();
 
         Map<String, AggregatedPrice> bestPrices = aggregatedPrices.stream()
@@ -46,8 +46,8 @@ public class AggregatedPriceServiceImpl implements AggregatedPriceService {
                    (p1 , p2) ->
                        AggregatedPrice.builder()
                                .symbol(p1.getSymbol())
-                               .bidPrice(Math.min(p1.getBidPrice(), p2.getBidPrice()))
-                               .askPrice(Math.max(p1.getAskPrice(), p2.getAskPrice()))
+                               .bidPrice(Math.max(p1.getBidPrice(), p2.getBidPrice()))
+                               .askPrice(Math.min(p1.getAskPrice(), p2.getAskPrice()))
                                .build()
 
                 ));
