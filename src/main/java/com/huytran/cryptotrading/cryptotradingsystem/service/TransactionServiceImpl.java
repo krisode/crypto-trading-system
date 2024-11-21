@@ -5,6 +5,8 @@ import com.huytran.cryptotrading.cryptotradingsystem.repository.TransactionRepos
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -14,5 +16,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction createTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionsByUserId(Long userId) {
+        return transactionRepository.findAllByUserId(userId);
     }
 }
