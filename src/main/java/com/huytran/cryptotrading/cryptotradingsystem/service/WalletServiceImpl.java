@@ -10,7 +10,7 @@ import com.huytran.cryptotrading.cryptotradingsystem.repository.WalletRepository
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +31,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Optional<Wallet> getWalletByUserAndCurrency(CryptoUser cryptoUser, Currency currency) {
-        return walletRepository.findByUserIdAndCurrency(cryptoUser.getId(), currency.name());
+    public Wallet requireWalletByUserIdAndCurrency(Long userId, Currency currency) {
+        return walletRepository.findByUserIdAndCurrency(userId, currency.name())
+                .orElseThrow(() -> new RuntimeException("Wallet not found"));
+    }
+
+    @Override
+    public List<Wallet> getAllWalletsByUserId(Long userId) {
+        return walletRepository.findAllByUserId(userId);
     }
 
     @Override

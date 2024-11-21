@@ -2,7 +2,7 @@ package com.huytran.cryptotrading.cryptotradingsystem.controller;
 
 import com.huytran.cryptotrading.cryptotradingsystem.enums.Symbol;
 import com.huytran.cryptotrading.cryptotradingsystem.mapper.PriceMapper;
-import com.huytran.cryptotrading.cryptotradingsystem.model.response.LatestBestPrice;
+import com.huytran.cryptotrading.cryptotradingsystem.model.response.LatestBestPriceResponse;
 import com.huytran.cryptotrading.cryptotradingsystem.service.AggregatedPriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ public class PriceController {
     private final AggregatedPriceService aggregatedPriceService;
 
     @GetMapping("/latest")
-    public ResponseEntity<List<LatestBestPrice>> getLatestBestPrices() {
+    public ResponseEntity<List<LatestBestPriceResponse>> getLatestBestPrices() {
         final var latestBestPriceForAllSymbols = aggregatedPriceService.getLatestBestPriceForAllSymbols();
         final var response = priceMapper.toResponse(latestBestPriceForAllSymbols);
 
@@ -27,7 +27,7 @@ public class PriceController {
     }
 
     @GetMapping("/latest/{symbol}")
-    public ResponseEntity<LatestBestPrice> getLatestBestPrice(@PathVariable Symbol symbol) {
+    public ResponseEntity<LatestBestPriceResponse> getLatestBestPrice(@PathVariable Symbol symbol) {
         final var latestBestPriceForSymbol = aggregatedPriceService.requireLatestBestPriceForSymbol(symbol);
         final var response = priceMapper.toResponse(latestBestPriceForSymbol);
 
