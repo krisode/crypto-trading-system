@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletBalanceResponse {
-    Currency currency;
-    double balance;
+  Currency currency;
+  double balance;
 }

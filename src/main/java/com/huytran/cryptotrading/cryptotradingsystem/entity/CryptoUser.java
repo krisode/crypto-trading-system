@@ -10,11 +10,10 @@ import lombok.*;
 @AllArgsConstructor
 @Entity(name = "crypto_user")
 public class CryptoUser {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+  @Column(nullable = false, unique = true)
+  private String username;
 }
-

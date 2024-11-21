@@ -8,8 +8,8 @@ import lombok.Data;
 @Data
 @Builder
 public class TradeRequest {
-    @Builder.Default private Long cryptoUserId = 1L;
-    private Symbol symbol;
-    private TradeType tradeType;
-    private double quantity;
+  @Builder.Default private Long cryptoUserId = 1L;
+  private Symbol symbol;
+  private TradeType tradeType;
+  private double quantity;
 }

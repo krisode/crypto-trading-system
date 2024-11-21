@@ -11,20 +11,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TradeResponse {
 
-    public TradeResponse(Symbol symbol, TradeType tradeType, double quantity, double price) {
-        this.symbol = symbol;
-        this.tradeType = tradeType;
-        this.quantity = quantity;
-        this.price = price;
-    }
+  public TradeResponse(Symbol symbol, TradeType tradeType, double quantity, double price) {
+    this.symbol = symbol;
+    this.tradeType = tradeType;
+    this.quantity = quantity;
+    this.price = price;
+  }
 
-    private Symbol symbol;
-    private TradeType tradeType;
-    private double quantity;
-    private double price;
-    private double total;
+  private Symbol symbol;
+  private TradeType tradeType;
+  private double quantity;
+  private double price;
+  private double total;
 
-    public double getTotal() {
-        return quantity * price;
-    }
+  public double getTotal() {
+    return quantity * price;
+  }
 }
